@@ -1,12 +1,13 @@
-package com.example;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 
+import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
 
-public class App {
+public class KafkaCdcConsumer {
     public static void main(String[] args) {
-        System.out.println("Hello Event-Based Kafka-Flick Thingy!");
-
         Properties props = new Properties();
         props.put("bootstrap.servers", "localhost:9092");
         props.put("group.id", "test");
