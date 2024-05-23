@@ -2,6 +2,11 @@
 
 Event based ingestion and processing service to handle batch or streaming data
 
-## Install and run Kafka locally
+## docker-compose
 
-Follow <https://developer.confluent.io/quickstart/kafka-local/>
+Has the following services:
+
+* zookeeper
+* kafka
+* postgres
+* debezium
