@@ -1,0 +1,8 @@
+{
+    "files.exclude": {
+        "**/target": true
+    },
+    "cSpell.words": [
+        "Flink"
+    ]
+}
