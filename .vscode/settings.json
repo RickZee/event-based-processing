@@ -1,8 +1,8 @@
 {
-    "files.exclude": {
-        "**/target": true
-    },
-    "cSpell.words": [
-        "Flink"
-    ]
+  "files.exclude": {
+    "**/target": true
+  },
+  "cSpell.words": ["Flink"],
+  "java.compile.nullAnalysis.mode": "automatic",
+  "java.configuration.updateBuildConfiguration": "automatic"
 }

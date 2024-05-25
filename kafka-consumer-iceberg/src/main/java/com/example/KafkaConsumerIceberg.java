@@ -8,12 +8,12 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 public class KafkaConsumerIceberg {
+    private static Logger logger = LoggerFactory.getLogger(KafkaConsumerIceberg.class);
     public static void main(String[] args) {
-        final static Logger logger = LoggerFactory.getLogger(KafkaConsumerIceberg.class);
         logger.debug("Starting Kafka Consumer...");
 
         Properties props = new Properties();
@@ -29,7 +29,7 @@ public class KafkaConsumerIceberg {
         while (true) {
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
             for (ConsumerRecord<String, String> record : records) {
-                System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
+                logger.debug("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
             }
         }
     }
