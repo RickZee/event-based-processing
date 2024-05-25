@@ -12,6 +12,10 @@ Contains the following services:
 * debezium
 * kafka-ui
 * pgadmin
+* schema-registry
+
+Add Debezium connector by running `add-connector.sh`.
+
 
 ## Let's try to use the following examples
 
@@ -25,6 +29,6 @@ Run Kafka consumer from `kafka-consumer-iceberg` folder.
 
 Kafka UI is available at <http://localhost:8080/>
 
-Open Postgres DB UI (available on <http://localhost:8080/>), go to `postgress` database, `assessments` table.
+Open Postgres DB UI (available on <http://localhost:8082/>), go to `postgress` database, `assessments` table.
 
 Start making changes to the `assessments` table. Watch Debezium (CDC) piping the data into Kafka.
