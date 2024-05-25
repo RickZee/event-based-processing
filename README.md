@@ -1,4 +1,4 @@
-# event-based-processing
+# kafka-consumer-iceberg
 
 Event based ingestion and processing service to handle batch or streaming data
 
