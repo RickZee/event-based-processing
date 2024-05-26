@@ -6,13 +6,12 @@ Event based ingestion and processing service to handle batch or streaming data
 
 Contains the following services:
 
-* zookeeper
 * kafka
-* postgres
 * debezium
-* kafka-ui
 * pgadmin
-* schema-registry
+* postgres
+* kafka
+* zookeeper
 
 Add Debezium connector by running `add-connector.sh`.
 
