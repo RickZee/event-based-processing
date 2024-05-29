@@ -19,7 +19,11 @@ Run `docker-compose up`.
 
 Add Debezium connector from `add-connector.sh`.
 
-Open Postgres UI (<http://localhost:8082/>) and create the table and data from `data/create-assessment-table.sql`.
+Open Postgres UI (<http://localhost:8082/>, the password is `postgres`).
+
+Create a new connection to server `postgres`.
+
+Open and create the table and data from `data/create-assessment-table.sql`.
 
 ## Let's try to use the following examples
 

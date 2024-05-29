@@ -106,20 +106,6 @@ services:
     networks:
       event-based-processing:
 
-  # debezium-ui:
-  #   image: debezium/debezium-ui:2.1
-  #   container_name: debezium-ui
-  #   hostname: debezium-ui
-  #   depends_on:
-  #     debezium:
-  #       condition: service_healthy
-  #   ports:
-  #     - '8080:8080'
-  #   environment:
-  #     KAFKA_CONNECT_URIS: http://debezium:8083
-  #   networks:
-  #     event-based-processing:
-
   postgres:
     image: postgres:latest
     container_name: postgres

@@ -19,9 +19,6 @@ public class KafkaConsumerIceberg {
         Properties props = new Properties();
         props.put("bootstrap.servers", "localhost:9092");
 
-        // props.put(listeners=PLAINTEXT://0.0.0.0:9092
-        // props.put(advertised.listeners=PLAINTEXT://10.75.1.247:9092
-
         props.put("group.id", "test");
         props.put("enable.auto.commit", "true");
         props.put("auto.commit.interval.ms", "1000");
@@ -29,14 +26,14 @@ public class KafkaConsumerIceberg {
         props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
 
-        String topic = "dbserver1.public.assessments";
+        String topic = "real-estate.public.assessments";
         logger.info("Subscribing to topic {} ...", topic);
-        consumer.subscribe(Collections.singletonList("dbserver1.public.assessments"));
+        consumer.subscribe(Collections.singletonList(topic));
 
         while (true) {
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
             for (ConsumerRecord<String, String> record : records) {
-                logger.info("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
+                logger.info("offset = {}, key = {}, value = {}", record.offset(), record.key(), record.value());
             }
         }
     }
