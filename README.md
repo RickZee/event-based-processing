@@ -13,7 +13,13 @@ Contains the following services:
 * kafka
 * zookeeper
 
-Add Debezium connector by running `add-connector.sh`.
+## Setup
+
+Run `docker-compose up`.
+
+Add Debezium connector from `add-connector.sh`.
+
+Open Postgres UI (<http://localhost:8082/>) and create the table and data from `data/create-assessment-table.sql`.
 
 ## Let's try to use the following examples
 
