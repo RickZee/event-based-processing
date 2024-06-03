@@ -6,12 +6,13 @@ Event based ingestion and processing service to handle batch or streaming data
 
 Contains the following services:
 
-* kafka
+* kafka-ui
 * debezium
 * pgadmin
 * postgres
 * kafka
 * zookeeper
+* kafka-test-producer
 
 ## Setup
 
