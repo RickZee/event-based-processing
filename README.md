@@ -48,3 +48,9 @@ Sometimes you need to delete docker volumes with the containers:
 `docker-compose down -v`
 
 This will clear all data stored and settings so you'll have to restart from scratch.
+
+## Build kafka-test-producer
+
+This is a simple Java app that will continuously stream data into the Kafka topic.
+
+Run `docker build -t event-based-processing/kafka-test-producer:latest .` to build the docker image.
