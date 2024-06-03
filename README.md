@@ -47,4 +47,4 @@ Sometimes you need to delete docker volumes with the containers:
 
 `docker-compose down -v`
 
-This will create all data stored and settings so you'll have to restart from scratch.
+This will clear all data stored and settings so you'll have to restart from scratch.
