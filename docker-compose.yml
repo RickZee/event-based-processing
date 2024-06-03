@@ -143,7 +143,19 @@ services:
       - postgres
     networks:
       event-based-processing:
-          
+
+  kafka-test-producer:
+    build:
+      context: ./kafka-test-producer
+      dockerfile: Dockerfile
+    container_name: kafka-test-producer
+    image: event-based-processing/kafka-test-producer:latest
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - event-based-processing
+
 networks:
   event-based-processing:
     name: event-based-processing

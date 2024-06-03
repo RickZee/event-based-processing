@@ -1,5 +1,5 @@
 # Use a base image with Java and Maven installed
-FROM maven:3.8.4-openjdk-11
+FROM maven:3.9.7-eclipse-temurin-21
 
 # Set the working directory inside the container
 WORKDIR /app
