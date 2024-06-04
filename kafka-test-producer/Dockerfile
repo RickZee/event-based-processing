@@ -17,7 +17,7 @@ FROM eclipse-temurin:21
 WORKDIR /app
 
 # Copy the application JAR file from the build stage to the container
-COPY --from=build /app/target/kafka-test-producer-1.0-SNAPSHOT.jar .
+COPY --from=build /app/target/kafka-test-producer-1.0-SNAPSHOT-jar-with-dependencies.jar .
 
 # Set the command to run the application
-CMD ["java", "-jar", "kafka-test-producer-1.0-SNAPSHOT.jar"]
+CMD ["java", "-jar", "kafka-test-producer-1.0-SNAPSHOT-jar-with-dependencies.jar"]

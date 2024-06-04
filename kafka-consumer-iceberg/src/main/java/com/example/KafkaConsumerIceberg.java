@@ -26,9 +26,10 @@ public class KafkaConsumerIceberg {
         props.put("auto.commit.interval.ms", "1000");
         props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
-
         String topic = "real-estate.public.assessments";
+
         logger.info("Subscribing to topic {} ...", topic);
         consumer.subscribe(Collections.singletonList(topic));
 
