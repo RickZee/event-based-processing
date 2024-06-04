@@ -156,6 +156,48 @@ services:
     networks:
       event-based-processing:
 
+  flink-jobmanager:
+    image: flink:1.19.0-scala_2.12
+    container_name: flink-jobmanager
+    ports:
+      - "8081:8081"
+    command: jobmanager
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: flink-jobmanager
+    networks:
+      event-based-processing:
+
+  flink-taskmanager:
+    image: flink:1.19.0-scala_2.12
+    container_name: flink-taskmanager
+    depends_on:
+      - flink-jobmanager
+    command: taskmanager
+    scale: 1
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: flink-jobmanager
+        taskmanager.numberOfTaskSlots: 2        
+    networks:
+      event-based-processing:
+
+  # Something is wrong with the flink-sql-client
+  # flink-sql-client:
+  #   image: flink:1.19.0-scala_2.12
+  #   command: bin/sql-client.sh
+  #   depends_on:
+  #     - flink-jobmanager
+  #   environment:
+  #     - |
+  #       FLINK_PROPERTIES=
+  #       jobmanager.rpc.address: flink-jobmanager
+  #       rest.address: flink-jobmanager
+  #   networks:
+  #     event-based-processing:
+
 networks:
   event-based-processing:
     name: event-based-processing

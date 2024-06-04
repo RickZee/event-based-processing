@@ -6,13 +6,15 @@ Event based ingestion and processing service to handle batch or streaming data
 
 Contains the following services:
 
-* kafka-ui
+* flink-taskmanager
+* flink-jobmanager
+* kafka-test-producer
 * debezium
+* kafka-ui
+* kafka
 * pgadmin
 * postgres
-* kafka
 * zookeeper
-* kafka-test-producer
 
 ## Setup
 
@@ -25,6 +27,9 @@ Open Postgres UI (<http://localhost:8082/>, the password is `postgres`).
 Create a new connection to server `postgres`.
 
 Open and create the table and data from `data/create-assessment-table.sql`.
+
+Open Flink dashboard UI (<http://localhost:8081/>).
+
 
 ## Let's try to use the following examples
 
