@@ -1,7 +1,19 @@
 package com.example;
 
-import org.apache.flink.streaming.api.datastream.DataStream;
+// import java.util.List;
+// import java.util.stream.Collectors;
+// import org.apache.flink.api.common.typeinfo.TypeInformation;
+// import org.apache.flink.api.java.typeutils.RowTypeInfo;
+
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.table.api.Table;
+import org.apache.flink.table.api.TableResult;
+import org.apache.flink.table.api.EnvironmentSettings;
+import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
+import static org.apache.flink.table.api.Expressions.$;
+
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -15,7 +27,8 @@ import org.slf4j.Logger;
 
 public class KafkaConsumerIceberg {
     private static Logger logger = LoggerFactory.getLogger(KafkaConsumerIceberg.class);
-    public static void main(String[] args) {
+
+    public static void main(String[] args) throws Exception {
         logger.info("Starting Kafka Consumer...");
 
         Properties props = new Properties();
@@ -26,7 +39,7 @@ public class KafkaConsumerIceberg {
         props.put("auto.commit.interval.ms", "1000");
         props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        
+
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
         String topic = "real-estate.public.assessments";
 
@@ -34,33 +47,74 @@ public class KafkaConsumerIceberg {
         consumer.subscribe(Collections.singletonList(topic));
 
         // Testing Kafka Consumer
+        // testConsumeFromKafka(consumer);
+
+        try {
+            streamIntoIcebergFromKafka(consumer);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        // Stream into Iceberg using Flink
+
+    }
+
+    private static void streamIntoIcebergFromKafka(KafkaConsumer<String, String> consumer) throws Exception {
+
+        // set up the execution environment
+        final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        // ...
+
+        final StreamTableEnvironment tableEnv = StreamTableEnvironment.create(
+                env,
+                EnvironmentSettings.newInstance().inStreamingMode().build());
+
+        // List all catalogs
+        TableResult result = tableEnv.executeSql("SHOW CATALOGS");
+
+        // Print the result to standard out
+        result.print();
+
+        // Set the current catalog to the new catalog
+        tableEnv.useCatalog("iceberg");
+
+        // Create a database in the current catalog
+        tableEnv.executeSql("CREATE DATABASE IF NOT EXISTS db");
+
+        // create the table
+        tableEnv.executeSql(
+                "CREATE TABLE IF NOT EXISTS db.table1 ("
+                        + "id BIGINT COMMENT 'unique id',"
+                        + "data STRING"
+                        + ")");
+
+        // create a DataStream of Tuple2 (equivalent to Row of 2 fields)
+        DataStream<Tuple2<Long, String>> dataStream = env.fromElements(
+                Tuple2.of(1L, "foo"),
+                Tuple2.of(1L, "bar"),
+                Tuple2.of(1L, "baz"));
+
+        // convert the DataStream to a Table
+        Table table = tableEnv.fromDataStream(dataStream, $("id"), $("data"));
+
+        // register the Table as a temporary view
+        tableEnv.createTemporaryView("my_datastream", table);
+
+        // write the DataStream to the table
+        tableEnv.executeSql(
+                "INSERT INTO db.table1 SELECT * FROM my_datastream");
+
+        env.execute("Flink Streaming Java API Skeleton");
+    }
+
+    private static void testConsumeFromKafka(KafkaConsumer<String, String> consumer) {
+        // Testing Kafka Consumer
         while (true) {
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
             for (ConsumerRecord<String, String> record : records) {
-                logger.info("Receiving message offset = {}, key = {}, value = {}", record.offset(), record.key(), record.value());
+                logger.info("Receiving message offset = {}, key = {}, value = {}", record.offset(), record.key(),
+                        record.value());
             }
         }
-
-        // DataStream<org.apache.avro.generic.GenericRecord> dataStream = ...;
-
-        // Schema icebergSchema = table.schema();
-        
-        // // The Avro schema converted from Iceberg schema can't be used
-        // // due to precision difference between how Iceberg schema (micro)
-        // // and Flink AvroToRowDataConverters (milli) deal with time type.
-        // // Instead, use the Avro schema defined directly.
-        // // See AvroGenericRecordToRowDataMapper Javadoc for more details.
-        // org.apache.avro.Schema avroSchema = AvroSchemaUtil.convert(icebergSchema, table.name());
-        
-        // GenericRecordAvroTypeInfo avroTypeInfo = new GenericRecordAvroTypeInfo(avroSchema);
-        // RowType rowType = FlinkSchemaUtil.convert(icebergSchema);
-        
-        // FlinkSink.builderFor(
-        //     dataStream,
-        //     AvroGenericRecordToRowDataMapper.forAvroSchema(avroSchema),
-        //     FlinkCompatibilityUtil.toTypeInfo(rowType))
-        //   .table(table)
-        //   .tableLoader(tableLoader)
-        //   .append();
     }
 }
