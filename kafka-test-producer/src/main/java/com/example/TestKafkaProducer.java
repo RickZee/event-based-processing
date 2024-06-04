@@ -17,10 +17,11 @@ public class TestKafkaProducer {
         logger.info("Starting Kafka Producer...");
 
         Properties props = new Properties();
-        props.put("bootstrap.servers", "localhost:9092");
+
+        props.put("bootstrap.servers", "kafka:9092");
         props.put("acks", "all");
-        props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 
         Producer<String, String> producer = new KafkaProducer<>(props);
         String topic = "real-estate.public.assessments";
