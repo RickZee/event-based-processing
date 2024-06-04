@@ -154,7 +154,7 @@ services:
       kafka:
         condition: service_healthy
     networks:
-      - event-based-processing
+      event-based-processing:
 
 networks:
   event-based-processing:

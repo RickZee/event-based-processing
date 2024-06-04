@@ -18,13 +18,14 @@ public class TestKafkaProducer {
 
         Properties props = new Properties();
 
-        props.put("bootstrap.servers", "kafka:9092");
+        props.put("bootstrap.servers", "PLAINTEXT://kafka:29092");
         props.put("acks", "all");
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 
         Producer<String, String> producer = new KafkaProducer<>(props);
         String topic = "real-estate.public.assessments";
+        logger.info("About to start sending to topic {} ...", topic);
 
         // Continuous producer
         while (true) {
