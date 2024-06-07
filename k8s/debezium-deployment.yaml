@@ -1,0 +1,75 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: debezium
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: debezium
+  namespace: debezium
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: debezium
+  template:
+    metadata:
+      labels:
+        app: debezium
+    spec:
+      containers:
+      containers:
+      - image: debezium/connect:2.4.1.Final
+        name: debezium
+        env:
+        - name: BOOTSTRAP_SERVERS
+          value: PLAINTEXT://my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092
+        - name: GROUP_ID
+          value: '1'
+        - name: CONFIG_STORAGE_TOPIC
+          value: connect_configs
+        - name: OFFSET_STORAGE_TOPIC
+          value: connect_offsets
+        - name: STATUS_STORAGE_TOPIC
+          value: connect_statuses
+        - name: DATABASE_HOSTNAME
+          value: postgresql.postgresql.svc.cluster.local
+        - name: DATABASE_PORT
+          value: '5432'
+        - name: DATABASE_USER
+          value: postgresql
+        - name: DATABASE_PASSWORD
+          value: 
+        - name: DATABASE_DBNAME
+          value: real_estate
+        - name: DATABASE_SERVER_NAME
+          value:  dbserver1
+        - name: DATABASE_INCLUDE
+          value: public
+        - name: DATABASE_HISTORY_KAFKA_BOOTSTRAP_SERVERS
+          value: my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092      
+        - name: CONNECT_REST_ADVERTISED_HOST_NAME
+          value: debezium
+        - name: KEY_CONVERTER
+          value: org.apache.kafka.connect.json.JsonConverter
+        - name: VALUE_CONVERTER
+          value: org.apache.kafka.connect.json.JsonConverter
+        - name: ENABLE_DEBEZIUM_SCRIPTING
+          value: 'true'
+        ports:
+        - containerPort: 8083
+        #livenessProbe:
+        #  exec:
+        #    command:
+            #- 'CMD'
+        #    - 'curl'
+        #    - '--silent'
+        #    - '--fail'
+        #    - '-X'
+        #    - 'GET'
+        #    - 'http://localhost:8083/connectors'
+        #  initialDelaySeconds: 5
+        #  periodSeconds: 5
+        #  timeoutSeconds: 5

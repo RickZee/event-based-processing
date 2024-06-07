@@ -1,0 +1,29 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-ui
+  namespace: kafka
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-ui
+  template:
+    metadata:
+      labels:
+        app: kafka-ui
+    spec:
+      containers:
+      containers:
+      - image: provectuslabs/kafka-ui:latest
+        name: kafka-ui
+        env:
+        - name: KAFKA_CLUSTERS_0_NAME
+          value: local
+        - name: KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS
+          value: my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092
+        #- name: KAFKA_CLUSTERS_0_ZOOKEEPER
+        #  value: zookeeper:2181
+        ports:
+        - containerPort: 8080

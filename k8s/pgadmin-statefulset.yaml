@@ -1,0 +1,71 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: postgresql
+  name: pgadmin
+  labels:
+    app: pgadmin
+spec:
+  ports:
+  - port: 8082
+    protocol: TCP
+    targetPort: http
+    name: pgadmin
+  clusterIP: None
+  selector:
+    app: pgadmin
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pgadmin
+  namespace: postgresql
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: standard
+  volumeMode: Filesystem
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: pgadmin
+  namespace: postgresql
+  labels:
+    app: "pgadmin"
+spec:
+  serviceName: "pgadmin"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgadmin
+  template:
+    metadata:
+      labels:
+        app: pgadmin
+    spec:
+      containers:
+      - name: pgadmin
+        image: dpage/pgadmin4:8.6
+        env:
+        - name: PGADMIN_DEFAULT_EMAIL
+          value: admin@pgadmin.com
+        - name: PGADMIN_DEFAULT_PASSWORD
+          value: postgres
+        - name: PGADMIN_CONFIG_SERVER_MODE
+          value: 'False'
+        - name: PGADMIN_LISTEN_PORT
+          value: "8082"
+        ports:
+        - containerPort: 8082
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/pgadmin
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: pgadmin
