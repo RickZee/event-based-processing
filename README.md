@@ -60,3 +60,12 @@ This will clear all data stored and settings so you'll have to restart from scra
 This is a simple Java app that will continuously stream data into the Kafka topic.
 
 Run `docker build -t event-based-processing/kafka-test-producer:latest .` from the `kafka-test-producer` folder to build the docker image. Or just `docker-compose build` from the repo root.
+
+## Running in k8s
+
+To cleanup everything besides default k8s namespaces:
+
+```shell
+chmod +x ./destroy-everything.sh
+./destroy-everything.sh
+```
