@@ -1,0 +1,67 @@
+---
+# Source: tenant/templates/tenant-configuration.yaml
+# WARNING: '.secrets' is deprecated since v5.0.15 and will be removed in next minor release (i.e. v5.1.0). Please use '.tenant.configSecret' instead.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: myminio-env-configuration
+  namespace: minio-tenant
+type: Opaque
+stringData:
+  config.env: |-
+    export MINIO_ROOT_USER="minio"
+    export MINIO_ROOT_PASSWORD="minio123"
+---
+# Source: tenant/templates/tenant.yaml
+apiVersion: minio.min.io/v2
+kind: Tenant
+metadata:
+  name: minio-tenant
+  namespace: minio-tenant
+  ## Optionally pass labels to be applied to the statefulset pods
+  labels:
+    app: minio
+spec:
+  image: "quay.io/minio/minio:RELEASE.2024-05-01T01-11-10Z"
+  imagePullPolicy: IfNotPresent
+  ## Secret with default environment variable configurations
+  configuration:
+    name: myminio-env-configuration
+  pools:
+    - servers: 1
+      name: pool-0
+      volumesPerServer: 1
+      volumeClaimTemplate:
+        metadata:
+          name: data
+        spec:
+          storageClassName: 
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 10Gi
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+      containerSecurityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault
+  mountPath: /export
+  subPath: /data
+  requestAutoCert: true
+  features:
+    bucketDNS: false
+    enableSFTP: false
+  podManagementPolicy: Parallel
+  prometheusOperator: false
