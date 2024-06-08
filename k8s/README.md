@@ -212,3 +212,47 @@ kubectl -n kafka port-forward pod/kafka-ui-5d74985c6d-r6pw4 8080:8080
 ```
 
 25. Open a browser and navigate to pgadmin UI address http://127.0.0.1:8080. Verify there are messages in the real-estate topic.
+
+## UIs
+
+The following commands expose the diffent UIs of the platform.
+
+kafka NOTE: your pod name will be different.
+```
+kubectl -n kafka port-forward pod/kafka-ui-5d74985c6d-r6pw4 8080:8080
+```
+pg-admin
+```
+kubectl -n postgresql port-forward pod/pgadmin-0 8082:8082
+```
+debezium NOTE: your pod name will be different.
+```
+kubectl -n debezium port-forward pod/debezium-67fb8b8886-gnncd 8083:8083
+```
+flink NOTE: your pod name will be different. 
+```
+kubectl -n flink port-forward pod/basic-session-deployment-only-example-56cb85556b-g5tbj 8081:8081
+```
+minio
+```
+kubectl -n minio-tenant port-forward pod/minio-tenant-pool-0-0 9443:9443
+```
+
+## Destroy
+
+Cert-manager
+```
+kubectl delete -f cert-manager.yaml
+kubectl delete -f debezium-deployment.yaml
+kubectl delete -f flink-operator.yaml
+kubectl delete -f flink-cluster.yaml
+kubectl delete -f kafka-operatory.yaml
+kubectl delete -f kafka-single-node.yaml
+kubectl delete -f kafka-ui-deployment.yaml
+kubectl delete -f postgresql-statefulset.yaml
+kubectl delete -f pgadmin-statefulset.yaml
+kubectl delete -f minio-operator.yaml
+kubectl delete -f minio-tenant.yaml
+kubectl delete -f namespaces.yaml
+```
+
