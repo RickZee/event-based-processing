@@ -13,7 +13,9 @@ Instructions for deploying to Kubernetes.
 * kafka-single-node.yaml - Deploys a kafka cluster instance.
 * kafka-ui-deployment.yaml - Deploys the kafka-ui web application.
 * postgresql-statefulset.yaml - Deploys a postgresql db instance.
-* pgadmin-statefulset.yaml - Deplosy pgadmin ui web application.
+* pgadmin-statefulset.yaml - Deploys pgadmin ui web application.
+* minio-operator.yaml - Deploys minio operator. For provisioning minio tenants.
+* minio-tenant.yaml - Deploys small, light weight minio tenant.
 * add-connector.sh - Calls the debezium API and adds a connector for postgresql.
 
 ## Deployment
@@ -142,36 +144,50 @@ kubectl apply -f flink-operator.yaml
 kubectl apply -f flink-cluster.yaml
 ```
 
-20. Verify the deployment.
+20. Deploy minio operator.
+```
+kubectl apply -f minio-operator.yaml
+```
+
+21. Deploy minio tenant.
+```
+kubectl apply -f minio-tenant.yaml
+```
+
+22. Verify the deployment.
 ```
 kubectl get pods -a
 ```
 You should see something similar to below.
 
 ```
-NAMESPACE      NAME                                                     READY   STATUS    RESTARTS        AGE
-cert-manager   cert-manager-5f68dcc8cd-tf79c                            1/1     Running   2 (5h42m ago)   33h
-cert-manager   cert-manager-cainjector-59f4df9856-j99cc                 1/1     Running   6 (5h41m ago)   33h
-cert-manager   cert-manager-webhook-5865dc7cfd-4sztn                    1/1     Running   4 (5h41m ago)   33h
-debezium       debezium-67fb8b8886-gnncd                                1/1     Running   0               26h
-flink          basic-session-deployment-only-example-56cb85556b-g5tbj   1/1     Running   0               24h
-flink          flink-kubernetes-operator-d8546dfff-nkrz9                2/2     Running   2 (5h28m ago)   24h
-kafka          kafka-ui-5d74985c6d-r6pw4                                1/1     Running   0               27h
-kafka          my-cluster-dual-role-0                                   1/1     Running   1 (5h42m ago)   33h
-kafka          my-cluster-entity-operator-d6c5c645-9x7np                2/2     Running   0               33h
-kafka          strimzi-cluster-operator-b9c59999f-2tvvn                 1/1     Running   60 (23m ago)    33h
-kube-system    coredns-7db6d8ff4d-pd2r2                                 1/1     Running   1 (37h ago)     38h
-kube-system    etcd-minikube                                            1/1     Running   1 (37h ago)     38h
-kube-system    kube-apiserver-minikube                                  1/1     Running   3 (5h41m ago)   38h
-kube-system    kube-controller-manager-minikube                         1/1     Running   1 (37h ago)     38h
-kube-system    kube-proxy-bj49l                                         1/1     Running   1 (37h ago)     38h
-kube-system    kube-scheduler-minikube                                  1/1     Running   1 (37h ago)     38h
-kube-system    storage-provisioner                                      1/1     Running   15 (60s ago)    38h
-postgresql     pgadmin-0                                                1/1     Running   1 (37h ago)     38h
-postgresql     postgresql-0                                             1/1     Running   0               26h
+NAMESPACE        NAME                                                     READY   STATUS             RESTARTS        AGE
+cert-manager     cert-manager-5f68dcc8cd-tf79c                            1/1     Running            17 (84s ago)    2d2h
+cert-manager     cert-manager-cainjector-59f4df9856-j99cc                 1/1     Running            21 (4m1s ago)   2d2h
+cert-manager     cert-manager-webhook-5865dc7cfd-4sztn                    1/1     Running            13 (20m ago)    2d2h
+debezium         debezium-67fb8b8886-gnncd                                1/1     Running            0               43h
+flink            basic-session-deployment-only-example-56cb85556b-g5tbj   1/1     Running            0               41h
+flink            flink-kubernetes-operator-d8546dfff-nkrz9                2/2     Running            10 (15m ago)    41h
+kafka            kafka-ui-5d74985c6d-r6pw4                                1/1     Running            0               43h
+kafka            my-cluster-dual-role-0                                   1/1     Running            1 (29m ago)     32m
+kafka            my-cluster-entity-operator-d6c5c645-9x7np                2/2     Running            0               2d2h
+kafka            strimzi-cluster-operator-b9c59999f-2tvvn                 1/1     Running            81 (36s ago)    2d2h
+kube-system      coredns-7db6d8ff4d-pd2r2                                 1/1     Running            1 (2d6h ago)    2d6h
+kube-system      etcd-minikube                                            1/1     Running            1 (2d6h ago)    2d6h
+kube-system      kube-apiserver-minikube                                  1/1     Running            9 (42s ago)     2d6h
+kube-system      kube-controller-manager-minikube                         1/1     Running            1 (2d6h ago)    2d6h
+kube-system      kube-proxy-bj49l                                         1/1     Running            1 (2d6h ago)    2d6h
+kube-system      kube-scheduler-minikube                                  1/1     Running            1 (2d6h ago)    2d6h
+kube-system      storage-provisioner                                      1/1     Running            44 (40s ago)    2d6h
+minio-operator   console-85fb7bd57d-2njfb                                 1/1     Running            0               54m
+minio-operator   minio-operator-5b9cc64b4b-6blz2                          1/1     Running            0               54m
+minio-operator   minio-operator-5b9cc64b4b-6fjsj                          1/1     Running            0               54m
+minio-tenant     minio-tenant-pool-0-0                                    2/2     Running            0               50m
+postgresql       pgadmin-0                                                1/1     Running            1 (2d6h ago)    2d6h
+postgresql       postgresql-0                                             1/1     Running            0               42h
 ```
 
-21. Add records to the database. Go to pgadmin and run the following in the real_estate database.
+23. Add records to the database. Go to pgadmin and run the following in the real_estate database.
 ```
 CREATE TABLE assessments (
     id SERIAL PRIMARY KEY,
@@ -190,9 +206,9 @@ VALUES
 ('d7d9e39a-5e1f-46a0-8f8e-77a8a596b7a2', '2021-04-01', 'Jane Smith', 'Poor', 'Not a great property');
 ```
 
-22. Expose the kafka UI.
+24. Expose the kafka UI.
 ```
 kubectl -n kafka port-forward pod/kafka-ui-5d74985c6d-r6pw4 8080:8080
 ```
 
-23. Open a browser and navigate to pgadmin UI address http://127.0.0.1:8080. Verify there are messages in the real-estate topic.
+25. Open a browser and navigate to pgadmin UI address http://127.0.0.1:8080. Verify there are messages in the real-estate topic.
