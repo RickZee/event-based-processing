@@ -63,9 +63,4 @@ Run `docker build -t event-based-processing/kafka-test-producer:latest .` from t
 
 ## Running in k8s
 
-To cleanup everything besides default k8s namespaces:
-
-```shell
-chmod +x ./destroy-everything.sh
-./destroy-everything.sh
-```
+[Follow the instructions in k8s/README.md](./k8s/README.md)
