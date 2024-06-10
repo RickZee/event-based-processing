@@ -7,7 +7,7 @@ Instructions for deploying to Kubernetes.
 * namespaces.yaml - Manifest of namespaces that will be used.
 * cert-manager.yaml - Deploys cert-manager. Used by flink.
 * debezium-deployment.yaml - Deploys an instance of debezium. Reads from postgresqldb and sends messages to kafka topic.
-* flink-operator.yaml - Deploys the flink operator. 
+* flink-operator.yaml - Deploys the flink operator.
 * flink-cluster.yaml - Deploys a flink cluster in session mode.
 * kafka-operatory.yaml - Deploys the kafka-operator.
 * kafka-single-node.yaml - Deploys a kafka cluster instance.
@@ -20,20 +20,29 @@ Instructions for deploying to Kubernetes.
 
 ## Deployment
 
-This document assumes you have a kubernetes cluster running. This was intially developed using minikube on a macbook. Eventually this will all be helm and you won't have to perform as many steps.
+This document assumes you have a kubernetes cluster running. This was initially developed using minikube on a macbook. Eventually this will all be helm and you won't have to perform as many steps.
+
+<!-- ### 1. Set postgres password (change `postgress` with your own password)
+
+```shell
+export POSTGRES_PASSWORD=postgres
+``` -->
 
 1. Deploy Namespaces
-```
+
+```shell
 kubectl apply -f namespaces.yaml
 ```
 
 2. Deploy cert-manager
-```
+
+```shell
 kubectl apply -f cert-manager.yaml
 ```
 
-3. Update the postgresql-statefulset.yaml. Set the password in the configmap. 
-```
+3. Update the postgresql-statefulset.yaml. Set the password in the configmap.
+
+```yml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -46,65 +55,78 @@ data:
   POSTGRES_USER: postgresql
   POSTGRES_PASSWORD: ##PUT YOUR PASSWORD HERE##
 ```
+
 4. Deploy Postgresql
-```
+
+```shell
 kubectl apply -f postgresql-statefulset.yaml
 ```
 
 5. Update pgadmin-statefulset.yaml. Set the password of pgadmin.
-```
+
+```yml
         - name: PGADMIN_DEFAULT_PASSWORD
           value: ##PUT YOUR PGADMIN PASSWORD HERE ##
 ```
 
 6. Deploy pgadmin-ui
-```
+
+```shell
 kubectl apply -f pgadmin-statefulset.yaml
 ```
 
 7. Update debesium-deployment.yaml. Set the database password to the password you defined in step 3.
-```
+
+```yml
         - name: DATABASE_PASSWORD
           value: ##PUT YOUR PASSWORD HERE###
 ```
 
 8. Deploy debezium
-```
+
+```shell
 kubectl apply -f debezium-deployment.yaml
 ```
 
 9. Deploy kafka operator.
-```
+
+```shell
 kubectl apply -f kafka-operator.yaml
 ```
 
 10. Deploy kafka cluster.
-```
+
+```shell
 kubectl apply -f kafka-single-node.yaml
 ```
 
 11. Deploy kafka topic.
-```
+
+```shell
 kubectl apply -f kafka-topic.yaml
 ```
 
 12. Expose the pgadmin UI.
-```
+
+```shell
 kubectl -n postgresql port-forward pod/pgadmin-0 8082:8082
 ```
 
-13. Open a browser and navigate to pgadmin UI address http://127.0.0.1:8082. Connect to the cluster. The database host is postgresql.postgresql.svc.cluster.local. Run the following on the database.
-```
+13. Open a browser and navigate to pgadmin UI address <http://127.0.0.1:8082>. Connect to the cluster. The database host is postgresql.postgresql.svc.cluster.local. Run the following on the database.
+
+```shell
 ALTER SYSTEM SET wal_level = logical;
 ```
 
-14. Restart the pod. This will cause a new pod to start up. 
-```
+14. Restart the pod. This will cause a new pod to start up.
+
+```shell
 kubectl delete pod postgresql-0 -n postgresql
 ```
 
 15. Edit add-connector.sh. Set the db password to the password you defined in step 3. This should probably be a k8s job.
-```
+
+```shell
 #!/bin/bash
 
 # Add connector
@@ -125,42 +147,50 @@ curl http://127.0.0.1:8083/connectors -X POST -H 'Content-Type: application/json
 ```
 
 16. Expose the debezium api. NOTE: Your pod name will be different.
-```
+
+```shell
 kubectl -n debezium port-forward pod/debezium-67fb8b8886-gnncd 8083:8083
 ```
 
 17. Add connector to debezium.
-```
+
+```shell
 ./add-connector.sh
 ```
 
 18. Deploy the flink operator.
-```
+
+```shell
 kubectl apply -f flink-operator.yaml
 ```
 
 19. Deploy the flink cluster.
-```
+
+```shell
 kubectl apply -f flink-cluster.yaml
 ```
 
 20. Deploy minio operator.
-```
+
+```shell
 kubectl apply -f minio-operator.yaml
 ```
 
 21. Deploy minio tenant.
-```
+
+```shell
 kubectl apply -f minio-tenant.yaml
 ```
 
 22. Verify the deployment.
-```
+
+```shell
 kubectl get pods -a
 ```
+
 You should see something similar to below.
 
-```
+```shell
 NAMESPACE        NAME                                                     READY   STATUS             RESTARTS        AGE
 cert-manager     cert-manager-5f68dcc8cd-tf79c                            1/1     Running            17 (84s ago)    2d2h
 cert-manager     cert-manager-cainjector-59f4df9856-j99cc                 1/1     Running            21 (4m1s ago)   2d2h
@@ -188,7 +218,8 @@ postgresql       postgresql-0                                             1/1   
 ```
 
 23. Add records to the database. Go to pgadmin and run the following in the real_estate database.
-```
+
+```sql
 CREATE TABLE assessments (
     id SERIAL PRIMARY KEY,
     assessment_id UUID NOT NULL,
@@ -207,41 +238,52 @@ VALUES
 ```
 
 24. Expose the kafka UI.
-```
+
+```shell
 kubectl -n kafka port-forward pod/kafka-ui-5d74985c6d-r6pw4 8080:8080
 ```
 
-25. Open a browser and navigate to pgadmin UI address http://127.0.0.1:8080. Verify there are messages in the real-estate topic.
+25. Open a browser and navigate to pgadmin UI address <http://127.0.0.1:8080>. Verify there are messages in the real-estate topic.
 
 ## UIs
 
-The following commands expose the diffent UIs of the platform.
+The following commands expose the different UIs of the platform.
 
 kafka NOTE: your pod name will be different.
-```
+
+```shell
 kubectl -n kafka port-forward pod/kafka-ui-5d74985c6d-r6pw4 8080:8080
 ```
+
 pg-admin
-```
+
+```shell
 kubectl -n postgresql port-forward pod/pgadmin-0 8082:8082
 ```
+
 debezium NOTE: your pod name will be different.
-```
+
+```shell
 kubectl -n debezium port-forward pod/debezium-67fb8b8886-gnncd 8083:8083
 ```
-flink NOTE: your pod name will be different. 
-```
+
+flink NOTE: your pod name will be different.
+
+```shell
 kubectl -n flink port-forward pod/basic-session-deployment-only-example-56cb85556b-g5tbj 8081:8081
 ```
+
 minio
-```
+
+```shell
 kubectl -n minio-tenant port-forward pod/minio-tenant-pool-0-0 9443:9443
 ```
 
 ## Destroy
 
 Cert-manager
-```
+
+```shell
 kubectl delete -f cert-manager.yaml
 kubectl delete -f debezium-deployment.yaml
 kubectl delete -f flink-operator.yaml
@@ -255,4 +297,3 @@ kubectl delete -f minio-operator.yaml
 kubectl delete -f minio-tenant.yaml
 kubectl delete -f namespaces.yaml
 ```
-

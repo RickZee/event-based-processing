@@ -9,7 +9,17 @@ metadata:
 data:
   POSTGRES_DB: real_estate
   POSTGRES_USER: postgresql
-  POSTGRES_PASSWORD: 
+  POSTGRES_PASSWORD: postgres
+---
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  namespace: postgresql
+  labels:
+    app: postgres
+data:
+  postgresql.conf: |
+    wal_level = logical
 ---
 apiVersion: v1
 kind: Service
@@ -77,6 +87,9 @@ spec:
         volumeMounts:
         - name: data
           mountPath: /var/lib/postgresql/data
+        - name: postgres-config
+          mountPath: /var/lib/postgresql/data/postgresql.conf
+          subPath: postgresql.conf
       volumes:
       - name: data
         persistentVolumeClaim:
