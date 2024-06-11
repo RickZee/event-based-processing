@@ -9,11 +9,10 @@ spec:
   rules:
   - http:
       paths:
-      - path: /testpath
+      - path: /pgadmin
         pathType: Prefix
         backend:
           service:
-            name: test
+            name: pgadmin
             port:
-              number: 80
-
+              number: 8082

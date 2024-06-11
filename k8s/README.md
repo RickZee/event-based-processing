@@ -137,7 +137,7 @@ curl http://127.0.0.1:8083/connectors -X POST -H 'Content-Type: application/json
     "database.hostname": "postgresql.postgresql.svc.cluster.local",
     "database.port": "5432",
     "database.user": "postgresql",
-    "database.password": "##PUT YOUR PASSWORD HERE##",
+    "database.password": "postgresql",
     "database.dbname" : "real_estate",
     "database.server.name": "dbserver1",
     "plugin.name": "pgoutput",
