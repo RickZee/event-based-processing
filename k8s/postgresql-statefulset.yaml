@@ -11,17 +11,17 @@ data:
   POSTGRES_USER: postgresql
   POSTGRES_PASSWORD: postgres
 ---
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: postgres-config
-  namespace: postgresql
-  labels:
-    app: postgres
-data:
-  postgresql.conf: |
-    wal_level = logical
----
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: postgres-config
+#   namespace: postgresql
+#   labels:
+#     app: postgres
+# data:
+#   postgresql.conf: |
+#     wal_level = logical
+# ---
 apiVersion: v1
 kind: Service
 metadata:
@@ -75,22 +75,14 @@ spec:
         envFrom:
         - configMapRef:
             name: postgres-secret
-        #command: ['postgres', '-c', 'wal_level=logical' ]
-        #- docker-entrypoint.sh
-        #- 'postgres'
-        #- '-c'
-        #- 'wal_level=logical'
-        #securityContext:
-        #  allowPrivilegeEscalation: false
-        #  runAsUser: 0
         ports:
         - containerPort: 5432
         volumeMounts:
         - name: data
           mountPath: /var/lib/postgresql/data
-        - name: postgres-config
-          mountPath: /var/lib/postgresql/data/postgresql.conf
-          subPath: postgresql.conf
+        # - name: postgres-config
+        #   mountPath: /var/lib/postgresql/data/postgresql.conf
+        #   subPath: postgresql.conf
       volumes:
       - name: data
         persistentVolumeClaim:

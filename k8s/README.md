@@ -2,6 +2,10 @@
 
 Instructions for deploying to Kubernetes.
 
+## Prerequisites
+
+Install minikube: <https://minikube.sigs.k8s.io/docs/start/>.
+
 ## Artifacts
 
 * namespaces.yaml - Manifest of namespaces that will be used.

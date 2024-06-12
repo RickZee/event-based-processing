@@ -1,18 +1,25 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
+  namespace: kafka
   name: minimal-ingress
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx-example
   rules:
-  - http:
+  - host: event-based-processing.local
+    http:
       paths:
-      - path: /pgadmin
+      - path: /kafka-ui
         pathType: Prefix
         backend:
           service:
-            name: pgadmin
+            name: kafka-ui
             port:
-              number: 8082
+              number: 8080
+      # - path: /pgadmin
+      #   pathType: Prefix
+      #   backend:
+      #     service:
+      #       name: pgadmin
+      #       port:
+      #         number: 8082

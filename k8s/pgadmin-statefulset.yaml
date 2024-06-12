@@ -8,11 +8,11 @@ metadata:
     app: pgadmin
 spec:
   ports:
-  - port: 8082
-    protocol: TCP
-    targetPort: http
+  - protocol: TCP
+    port: 8082
+    targetPort: 8082
     name: pgadmin
-  clusterIP: None
+  # clusterIP: None
   selector:
     app: pgadmin
 ---
