@@ -128,7 +128,7 @@ services:
       - postgress-data:/var/lib/postgresql/data
 
   pgadmin:
-    image: dpage/pgadmin4:8.6
+    image: dpage/pgadmin4:8.8
     container_name: pgadmin
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@pgadmin.com
@@ -183,6 +183,20 @@ services:
         taskmanager.numberOfTaskSlots: 2        
     networks:
       event-based-processing:
+  
+  minio:
+    image: docker.io/bitnami/minio:2024
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio-data:/data
+    networks:
+      event-based-processing:
 
   # Something is wrong with the flink-sql-client
   # flink-sql-client:
@@ -206,3 +220,4 @@ networks:
 volumes:
   pgadmin-data:
   postgress-data:
+  minio-data:

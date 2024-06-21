@@ -41,10 +41,11 @@ public class KafkaConsumerIceberg {
         Properties props = new Properties();
         props.put("bootstrap.servers", "localhost:9092");
 
-        props.put("enable.auto.commit", "true");
+        // props.put("enable.auto.commit", "true");
         props.put("auto.commit.interval.ms", "1000");
         props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        props.put("group.id", "iceberg-consumer-group");
 
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
         String topic = "real-estate.public.assessments";
@@ -53,107 +54,107 @@ public class KafkaConsumerIceberg {
         consumer.subscribe(Collections.singletonList(topic));
 
         // Testing Kafka Consumer
-        // testConsumeFromKafka(consumer);
+        testConsumeFromKafka(consumer);
 
-        try {
-            streamIntoIcebergFromKafka(consumer);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
+        // try {
+        //     streamIntoIcebergFromKafka(consumer);
+        // } catch (Exception e) {
+        //     e.printStackTrace();
+        //     System.exit(1);
+        // }
         // Stream into Iceberg using Flink
 
     }
 
-    private static void streamIntoIcebergFromKafka(KafkaConsumer<String, String> consumer) throws Exception {
+    // private static void streamIntoIcebergFromKafka(KafkaConsumer<String, String> consumer) throws Exception {
 
-        // set up the execution environment
-        final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        // ...
+    //     // set up the execution environment
+    //     final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+    //     // ...
 
-        final StreamTableEnvironment tableEnv = StreamTableEnvironment.create(
-                env,
-                EnvironmentSettings.newInstance().inStreamingMode().build());
+    //     final StreamTableEnvironment tableEnv = StreamTableEnvironment.create(
+    //             env,
+    //             EnvironmentSettings.newInstance().inStreamingMode().build());
 
-        // List all catalogs
-        TableResult result = tableEnv.executeSql("SHOW CATALOGS");
+    //     // List all catalogs
+    //     TableResult result = tableEnv.executeSql("SHOW CATALOGS");
 
-        // Print the result to standard out
-        result.print();
+    //     // Print the result to standard out
+    //     result.print();
 
-        // Set the current catalog to the new catalog
-        tableEnv.useCatalog("iceberg");
+    //     // Set the current catalog to the new catalog
+    //     tableEnv.useCatalog("iceberg");
 
-        // Create a database in the current catalog
-        tableEnv.executeSql("CREATE DATABASE IF NOT EXISTS real-estate");
+    //     // Create a database in the current catalog
+    //     tableEnv.executeSql("CREATE DATABASE IF NOT EXISTS real-estate");
 
-        // create the table
-        tableEnv.executeSql(
-                "CREATE TABLE IF NOT EXISTS real-estate.assessments ("
-                        + "id BIGINT COMMENT 'unique id',"
-                        + "data STRING"
-                        + ")");
+    //     // create the table
+    //     tableEnv.executeSql(
+    //             "CREATE TABLE IF NOT EXISTS real-estate.assessments ("
+    //                     + "id BIGINT COMMENT 'unique id',"
+    //                     + "data STRING"
+    //                     + ")");
 
 
-        Properties consumerConfig = new Properties();
-        try (InputStream stream = FlightImporterJob.class.getClassLoader().getResourceAsStream("consumer.properties")) {
-                consumerConfig.load(stream);
-        }
+    //     Properties consumerConfig = new Properties();
+    //     try (InputStream stream = FlightImporterJob.class.getClassLoader().getResourceAsStream("consumer.properties")) {
+    //             consumerConfig.load(stream);
+    //     }
 
-        Properties producerConfig = new Properties();
-        try (InputStream stream = FlightImporterJob.class.getClassLoader().getResourceAsStream("producer.properties")) {
-                producerConfig.load(stream);
-        }
+    //     Properties producerConfig = new Properties();
+    //     try (InputStream stream = FlightImporterJob.class.getClassLoader().getResourceAsStream("producer.properties")) {
+    //             producerConfig.load(stream);
+    //     }
 
-        KafkaSource<SkyOneAirlinesFlightData> skyOneSource = KafkaSource.<SkyOneAirlinesFlightData>builder()
-            .setProperties(consumerConfig)
-            .setTopics("skyone")
-            .setStartingOffsets(OffsetsInitializer.latest())
-            .setValueOnlyDeserializer(new JsonDeserializationSchema(SkyOneAirlinesFlightData.class))
-            .build();
+    //     KafkaSource<SkyOneAirlinesFlightData> skyOneSource = KafkaSource.<SkyOneAirlinesFlightData>builder()
+    //         .setProperties(consumerConfig)
+    //         .setTopics("skyone")
+    //         .setStartingOffsets(OffsetsInitializer.latest())
+    //         .setValueOnlyDeserializer(new JsonDeserializationSchema(SkyOneAirlinesFlightData.class))
+    //         .build();
 
-        DataStream<SkyOneAirlinesFlightData> skyOneStream = env
-            .fromSource(skyOneSource, WatermarkStrategy.noWatermarks(), "skyone_source");
+    //     DataStream<SkyOneAirlinesFlightData> skyOneStream = env
+    //         .fromSource(skyOneSource, WatermarkStrategy.noWatermarks(), "skyone_source");
 
-        KafkaRecordSerializationSchema<FlightData> flightSerializer = KafkaRecordSerializationSchema.<FlightData>builder()
-            .setTopic("flightdata")
-            .setValueSerializationSchema(new JsonSerializationSchema<FlightData>(
-                () -> {
-                    return new ObjectMapper()
-                        .registerModule(new JavaTimeModule());
-                }
-            ))
-            .build();
+    //     KafkaRecordSerializationSchema<FlightData> flightSerializer = KafkaRecordSerializationSchema.<FlightData>builder()
+    //         .setTopic("flightdata")
+    //         .setValueSerializationSchema(new JsonSerializationSchema<FlightData>(
+    //             () -> {
+    //                 return new ObjectMapper()
+    //                     .registerModule(new JavaTimeModule());
+    //             }
+    //         ))
+    //         .build();
 
-        KafkaSink<FlightData> flightSink = KafkaSink.<FlightData>builder()
-            .setKafkaProducerConfig(producerConfig)
-            .setRecordSerializer(flightSerializer)
-            .build();
+    //     KafkaSink<FlightData> flightSink = KafkaSink.<FlightData>builder()
+    //         .setKafkaProducerConfig(producerConfig)
+    //         .setRecordSerializer(flightSerializer)
+    //         .build();
 
-        defineWorkflow(skyOneStream)
-            .sinkTo(flightSink)
-            .name("flightdata_sink");
+    //     defineWorkflow(skyOneStream)
+    //         .sinkTo(flightSink)
+    //         .name("flightdata_sink");
 
-        env.execute("FlightImporter");
+    //     env.execute("FlightImporter");
 
-        // // create a DataStream of Tuple2 (equivalent to Row of 2 fields)
-        // DataStream<Tuple2<Long, String>> dataStream = env.fromElements(
-        //         Tuple2.of(1L, "foo"),
-        //         Tuple2.of(1L, "bar"),
-        //         Tuple2.of(1L, "baz"));
+    //     // // create a DataStream of Tuple2 (equivalent to Row of 2 fields)
+    //     // DataStream<Tuple2<Long, String>> dataStream = env.fromElements(
+    //     //         Tuple2.of(1L, "foo"),
+    //     //         Tuple2.of(1L, "bar"),
+    //     //         Tuple2.of(1L, "baz"));
 
-        // // convert the DataStream to a Table
-        // Table table = tableEnv.fromDataStream(dataStream, $("id"), $("data"));
+    //     // // convert the DataStream to a Table
+    //     // Table table = tableEnv.fromDataStream(dataStream, $("id"), $("data"));
 
-        // // register the Table as a temporary view
-        // tableEnv.createTemporaryView("my_datastream", table);
+    //     // // register the Table as a temporary view
+    //     // tableEnv.createTemporaryView("my_datastream", table);
 
-        // // write the DataStream to the table
-        // tableEnv.executeSql(
-        //         "INSERT INTO db.table1 SELECT * FROM my_datastream");
+    //     // // write the DataStream to the table
+    //     // tableEnv.executeSql(
+    //     //         "INSERT INTO db.table1 SELECT * FROM my_datastream");
 
-        // env.execute("Flink Streaming Java API Skeleton");
-    }
+    //     // env.execute("Flink Streaming Java API Skeleton");
+    // }
 
     private static void testConsumeFromKafka(KafkaConsumer<String, String> consumer) {
         // Testing Kafka Consumer
