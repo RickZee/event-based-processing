@@ -5,12 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "java",
+            "name": "KafkaConsumerIceberg",
+            "request": "launch",
+            "mainClass": "com.example.KafkaConsumerIceberg"
+        },
+        {
             "name": "Python Debugger: Iceber Consumer",
             "type": "debugpy",
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "pythonPath": "${workspaceFolder}/kafka-consumer-iceberg-python/.venv-producer/bin/python" // Adjust the path to match your virtual environment location
+            "pythonPath": "${workspaceFolder}/kafka-consumer-iceberg-python/.venv-producer/bin/python"
         }
     ]
 }

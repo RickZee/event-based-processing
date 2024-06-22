@@ -5,6 +5,7 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
 import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.slf4j.LoggerFactory;
@@ -32,7 +33,7 @@ public class TestKafkaProducer {
             String value = "message-" + ThreadLocalRandom.current().nextInt(100);
             logger.info("Sending message = {}", value);
 
-            producer.send(new ProducerRecord<>(topic, null, value));
+            producer.send(new ProducerRecord<>(topic, UUID.randomUUID().toString(), value));
 
             // Sleep for a bit to simulate a steady stream of messages
             try {
