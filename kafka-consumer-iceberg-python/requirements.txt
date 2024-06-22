@@ -1,4 +1,4 @@
-# apache-flink==1.17
+# setuptools
 confluent-kafka
-pyflink
-# kafka-python
+apache-flink
+# pyflink

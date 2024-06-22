@@ -2,6 +2,10 @@
 
 Event based ingestion and processing service to handle batch or streaming data.
 
+## Prerequisites
+
+Python 3.11 or *below*. Python 3.12 removed some setup utilities required by flink packages.
+
 ## Start `docker-compose`
 
 Contains the following services:
@@ -40,6 +44,13 @@ python3 -m venv .venv-data
 source .venv-data/bin/activate
 pip install -r requirements.txt
 python make_minio_bucket.py
+```
+
+If you're using Python 3.12.
+
+```shell
+brew install setuptools
+brew install python-setuptools
 ```
 
 ## Let's try to use the following examples
@@ -81,7 +92,6 @@ source .venv-producer/bin/activate
 pip install -r requirements.txt
 python make_minio_bucket.py
 ```
-
 
 ## Running in k8s
 
