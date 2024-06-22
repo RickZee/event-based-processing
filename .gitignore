@@ -28,3 +28,10 @@ target
 
 # Mac OS X files
 .DS_Store
+
+# Python files
+.venv
+.venv-producer
+.venv-data
+__pycache__/
+*.pyc

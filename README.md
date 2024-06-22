@@ -30,6 +30,17 @@ Open and create the table and data from `data/create-assessment-table.sql`.
 
 Open Flink dashboard UI (<http://localhost:8081/>).
 
+Minio dashboard UI (<http://localhost:9001/>).
+
+Create minio bucket.
+
+```shell
+cd data
+python3 -m venv .venv-data
+source .venv-data/bin/activate
+pip install -r requirements.txt
+python make_minio_bucket.py
+```
 
 ## Let's try to use the following examples
 
@@ -60,6 +71,17 @@ This will clear all data stored and settings so you'll have to restart from scra
 This is a simple Java app that will continuously stream data into the Kafka topic.
 
 Run `docker build -t event-based-processing/kafka-test-producer:latest .` from the `kafka-test-producer` folder to build the docker image. Or just `docker-compose build` from the repo root.
+
+## Kafka to Iceberg Consumer
+
+```shell
+cd kafka-consumer-iceberg-python
+python3 -m venv .venv-producer
+source .venv-producer/bin/activate
+pip install -r requirements.txt
+python make_minio_bucket.py
+```
+
 
 ## Running in k8s
 
