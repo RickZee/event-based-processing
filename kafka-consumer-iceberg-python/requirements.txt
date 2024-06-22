@@ -1,4 +1,4 @@
 # setuptools
 confluent-kafka
-apache-flink
+apache-flink==1.9.*
 # pyflink

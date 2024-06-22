@@ -1,10 +1,7 @@
 from confluent_kafka import Consumer
-# from pyflink.common import Types
-# from pyflink.datastream import StreamExecutionEnvironment
-
-from pyflink.table import *
-from pyflink.table.expressions import col
-from pyflink.table import EnvironmentSettings, TableEnvironment
+from pyflink.dataset import ExecutionEnvironment
+from pyflink.table import TableConfig
+from pyflink.java_gateway import get_gateway
 
 def main():
     # Consumer configuration
@@ -28,10 +25,22 @@ def main():
     stream_to_iceberg(topic)
 
 def stream_to_iceberg(topic):
+    gateway = get_gateway()
+    string_class = gateway.jvm.String
+    string_array = gateway.new_array(string_class, 0)
+    stream_env = gateway.jvm.org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
+    j_stream_exection_environment = stream_env.createRemoteEnvironment(
+        "localhost", 
+        8081, 
+        string_array
+    )
+
+    env = StreamExecutionEnvironment(j_stream_exection_environment)
+
+
     # Create a streaming TableEnvironment
-    env_settings = EnvironmentSettings.in_streaming_mode()
-    table_env = TableEnvironment.create(env_settings)
-    table_env
+    exec_env = ExecutionEnvironment.get_execution_environment()
+    t_config = TableConfig()
 
     # # Create a StreamExecutionEnvironment
     # env = StreamExecutionEnvironment.get_execution_environment()
