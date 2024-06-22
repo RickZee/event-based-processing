@@ -30,14 +30,14 @@ public class TestKafkaProducer {
 
         // Continuous producer
         while (true) {
-            String value = "message-" + ThreadLocalRandom.current().nextInt(100);
+            String value = "message-" + ThreadLocalRandom.current().nextInt(100000000);
             logger.info("Sending message = {}", value);
 
             producer.send(new ProducerRecord<>(topic, UUID.randomUUID().toString(), value));
 
             // Sleep for a bit to simulate a steady stream of messages
             try {
-                Thread.sleep(1000);
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 break;
