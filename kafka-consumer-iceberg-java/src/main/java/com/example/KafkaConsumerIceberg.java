@@ -36,16 +36,16 @@ public class KafkaConsumerIceberg {
     public static void main(String[] args) throws Exception {
         logger.info("Starting Kafka Consumer...");
 
-        Properties props = new Properties();
-        props.put("bootstrap.servers", "localhost:9092");
+        Properties properties = new Properties();
+        properties.put("bootstrap.servers", "localhost:9092");
 
-        // props.put("enable.auto.commit", "true");
-        props.put("auto.commit.interval.ms", "1000");
-        props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        props.put("group.id", "iceberg-consumer-group");
+        // properties.put("enable.auto.commit", "true");
+        properties.put("auto.commit.interval.ms", "1000");
+        properties.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        properties.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        properties.put("group.id", "iceberg-consumer-group");
 
-        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
+        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(properties);
         String topic = "real-estate.public.assessments";
 
         logger.info(String.format("Subscribing to topic %s ...", topic));

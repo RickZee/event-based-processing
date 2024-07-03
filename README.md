@@ -37,7 +37,7 @@ Run `docker-compose build && docker-compose up`.
 
 Add Debezium connector from `./data/add-connector.sh` (you can just copy-paste the contents in your terminal).
 
-### Create a table in Postgress
+### Create a table in Postgres
 
 Open Postgres UI the password is `postgres`.
 
