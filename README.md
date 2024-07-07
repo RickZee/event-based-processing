@@ -79,6 +79,20 @@ pip install -r requirements.txt
 python make_minio_bucket.py
 ```
 
+## Submit a Test Flink Job
+
+Package your jar.
+
+```terminal
+mvn package
+```
+
+Use Flink UI to upload the jar. Specify the entry point class, for example `com.example.KafkaConsumerIceberg`.
+
+![Add Flink Jar](doc/add-jar-to-flink.png)
+
+Run the job. Monitor `flink-jobmanager` container logs for errors.
+
 ## Running in k8s
 
 [Follow the instructions in k8s/README.md](./k8s/README.md)
