@@ -6,6 +6,8 @@ Event based ingestion and processing service to handle batch or streaming data.
 
 Python 3.11 or *below*. Python 3.12 removed some setup utilities required by flink packages.
 
+The repo uses Flink 1.17. The latest version Flink supports is Java 11, so configure your maven build to target it.
+
 ## Running in docker-compose
 
 ### Contains the following services
