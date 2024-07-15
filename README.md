@@ -71,16 +71,6 @@ Open Postgres UI, go to `real-estate` database, `assessments` table.
 
 Start making changes to the `assessments` table. Watch Debezium (CDC) piping the data into Kafka.
 
-## Kafka to Iceberg Consumer
-
-```shell
-cd kafka-consumer-iceberg-python
-python3 -m venv .venv-producer
-source .venv-producer/bin/activate
-pip install -r requirements.txt
-python make_minio_bucket.py
-```
-
 ## Submit a Test Flink Job
 
 Package your jar.
