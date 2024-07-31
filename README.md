@@ -81,7 +81,7 @@ mvn package
 
 Use Flink UI to upload the jar. Specify the entry point class, for example `com.example.KafkaConsumerIceberg`.
 
-![Add Flink Jar](doc/add-jar-to-flink.png)
+![Add Flink Jar](/doc/add-jar-to-flink.png)
 
 Run the job. Monitor `flink-jobmanager` container logs for errors.
 
@@ -98,3 +98,9 @@ Sometimes you need to delete docker volumes with the containers:
 This will clear all data stored and settings, so you'll have to restart from scratch.
 
 If that doesn't help you may have to remove docker data or reset your docker desktop.
+
+## Resources
+
+[Data Engineering Resources.pdf](/doc/Data%20Engineering%20Resources.pdf)
+
+[EventBased Processing.pdf](/doc/Event%20Based%20Processing.pdf)
