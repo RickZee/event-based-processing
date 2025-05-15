@@ -2,21 +2,23 @@
 
 ## Before you run the tests
 
-Start the MongoDB Docker Container:
-Ensure Docker is installed and running (docker --version).
-Start a MongoDB container:
+### Start the MongoDB Docker Container
+
+Ensure Docker is installed and running (`docker --version`).
+
+### Start a MongoDB container
 
 ```terminal
 docker run -d -p 27017:27017 --name mongodb mongo:latest
 ```
 
-Verify the container is running:
+### Verify the container is running
 
 ```terminal
 docker ps
 ```
 
-If port 27017 is in use, stop any existing MongoDB instances or use a different port (e.g., -p 27018:27017) and update the connection string in BigDecimalPrecisionTest to mongodb://localhost:27018.
+If port 27017 is in use, stop any existing MongoDB instances or use a different port (e.g., -p 27018:27017) and update the connection string in BigDecimalPrecisionTest to `mongodb://localhost:27018`.
 
 ## Run the Permutation Generator
 
