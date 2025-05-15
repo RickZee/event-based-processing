@@ -34,3 +34,9 @@ This will print up to 10,000 NumberPOJO instances with their field values, inclu
 
 Check the mvn clean install output to confirm all tests in BigDecimalPrecisionTest pass.
 If any tests fail, note the specific error messages and share them for further debugging.
+
+###  If tests fail due to unexpected data, clear the testCollection before running
+
+```terminal
+docker exec -it mongodb mongosh --eval "db.testCollection.drop()" test
+```

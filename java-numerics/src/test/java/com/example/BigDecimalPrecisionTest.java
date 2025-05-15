@@ -9,15 +9,20 @@ import org.apache.avro.generic.GenericDatumWriter;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.*;
 import org.bson.Document;
+import org.bson.types.Decimal128;
 import org.junit.jupiter.api.*;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
+
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BigDecimalPrecisionTest {
@@ -72,6 +77,23 @@ public class BigDecimalPrecisionTest {
     }
 
     private void testMongoDbStorage(BigDecimal original) {
+        // Generate a unique ID for the document
+        String uniqueId = UUID.randomUUID().toString();
+        Document doc = new Document("_id", uniqueId)
+                .append("value", original);
+        collection.insertOne(doc);
+
+        // Retrieve the document by unique ID
+        Document retrieved = collection.find(Filters.eq("_id", uniqueId)).first();
+        Decimal128 decimal128Value = retrieved.get("value", Decimal128.class);
+        BigDecimal retrievedValue = decimal128Value.bigDecimalValue();
+        assertEquals(original, retrievedValue, "BigDecimal precision lost in MongoDB");
+
+        // Clean up by deleting the document with the unique ID
+        collection.deleteOne(Filters.eq("_id", uniqueId));
+    }
+
+    private void testMongoDbStorageOriginal(BigDecimal original) {
         Document doc = new Document("value", original);
         collection.insertOne(doc);
         Document retrieved = collection.find().first();
