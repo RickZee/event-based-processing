@@ -21,6 +21,7 @@ import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 
@@ -34,6 +35,11 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
+
+import org.apache.avro.file.DataFileReader;
+import org.apache.avro.file.SeekableInput;
+import org.apache.avro.generic.GenericDatumReader;
+import org.apache.avro.io.DatumReader;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -175,8 +181,9 @@ public class KafkaS3IntegrationTest {
                     .bucket(BUCKET_NAME)
                     .key(key)
                     .build());
+            byte[] avroBytes = objectStream.readAllBytes();
             DatumReader<GenericRecord> datumReader = new GenericDatumReader<>(schema);
-            try (DataFileReader<GenericRecord> dataFileReader = new DataFileReader<>(new SeekableInputStream(objectStream), datumReader)) {
+            try (DataFileReader<GenericRecord> dataFileReader = new DataFileReader<>(new org.apache.avro.file.SeekableByteArrayInput(avroBytes), datumReader)) {
                 while (dataFileReader.hasNext()) {
                     GenericRecord record = dataFileReader.next();
                     BigDecimal retrievedValue = (BigDecimal) record.get("value");
