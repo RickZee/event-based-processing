@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.localstack.LocalStackContainer;
-import org.testcontainers.utility.DockerImageName;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.ResponseInputStream;
@@ -37,15 +36,12 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 
 import org.apache.avro.file.DataFileReader;
-import org.apache.avro.file.SeekableInput;
 import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.io.DatumReader;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.testcontainers.containers.localstack.LocalStackContainer.Service.S3;
 
 public class KafkaS3IntegrationTest {
     private static KafkaContainer kafkaContainer;
@@ -60,43 +56,9 @@ public class KafkaS3IntegrationTest {
 
     @BeforeAll
     public static void setUp() throws Exception {
-        // Start Kafka with Confluent image
-        kafkaContainer = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.7.1"));
-        kafkaContainer.start();
-
-        // Start Schema Registry
-        schemaRegistryContainer = new GenericContainer(DockerImageName.parse("confluentinc/cp-schema-registry:7.7.1"))
-                .withNetwork(kafkaContainer.getNetwork())
-                .withEnv("SCHEMA_REGISTRY_HOST_NAME", "schema-registry")
-                .withEnv("SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS", kafkaContainer.getBootstrapServers())
-                .withExposedPorts(8081);
-        schemaRegistryContainer.start();
-
-        // Start LocalStack for S3 emulation
-        localStackContainer = new LocalStackContainer(DockerImageName.parse("localstack/localstack:3.8.1"))
-                .withServices(S3);
-        localStackContainer.start();
-
-        // Start Kafka Connect with S3 Sink Connector
-        kafkaConnectContainer = new GenericContainer(DockerImageName.parse("confluentinc/cp-kafka-connect:7.7.1"))
-                .withNetwork(kafkaContainer.getNetwork())
-                .withEnv("CONNECT_BOOTSTRAP_SERVERS", kafkaContainer.getBootstrapServers())
-                .withEnv("CONNECT_REST_ADVERTISED_HOST_NAME", "kafka-connect")
-                .withEnv("CONNECT_GROUP_ID", "connect-group")
-                .withEnv("CONNECT_CONFIG_STORAGE_TOPIC", "connect-configs")
-                .withEnv("CONNECT_OFFSET_STORAGE_TOPIC", "connect-offsets")
-                .withEnv("CONNECT_STATUS_STORAGE_TOPIC", "connect-status")
-                .withEnv("CONNECT_KEY_CONVERTER", "org.apache.kafka.connect.storage.StringConverter")
-                .withEnv("CONNECT_VALUE_CONVERTER", "io.confluent.connect.avro.AvroConverter")
-                .withEnv("CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL", SCHEMA_REGISTRY_URL)
-                .withEnv("CONNECT_PLUGIN_PATH", "/usr/share/java,/usr/share/confluent-hub-components")
-                .withExposedPorts(8083)
-                .withCommand("sh", "-c", "confluent-hub install --no-prompt confluentinc/kafka-connect-s3:10.5.8 && /etc/confluent/docker/run");
-        kafkaConnectContainer.start();
-
         // Initialize S3 client for LocalStack
         s3Client = S3Client.builder()
-                .endpointOverride(localStackContainer.getEndpoint())
+                .endpointOverride(URI.create("http://localhost:4566"))
                 .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("test", "test")))
                 .region(Region.US_EAST_1)
                 .build();
@@ -105,7 +67,8 @@ public class KafkaS3IntegrationTest {
         s3Client.createBucket(b -> b.bucket(BUCKET_NAME));
 
         // Register Avro schema
-        String schemaContent = new String(Files.readAllBytes(new File("src/test/resources/decimal_record.avsc").toPath()));
+        String schemaContent = new String(
+                Files.readAllBytes(new File("src/test/resources/decimal_record.avsc").toPath()));
         HttpClient httpClient = HttpClient.newHttpClient();
         String schemaJson = String.format("{\"schema\":%s}", schemaContent);
         HttpRequest schemaRequest = HttpRequest.newBuilder()
@@ -121,11 +84,8 @@ public class KafkaS3IntegrationTest {
 
     @AfterAll
     public static void tearDown() {
-        if (kafkaConnectContainer != null) kafkaConnectContainer.stop();
-        if (schemaRegistryContainer != null) schemaRegistryContainer.stop();
-        if (localStackContainer != null) localStackContainer.stop();
-        if (kafkaContainer != null) kafkaContainer.stop();
-        if (s3Client != null) s3Client.close();
+        if (s3Client != null)
+            s3Client.close();
     }
 
     @Test
@@ -138,12 +98,11 @@ public class KafkaS3IntegrationTest {
                 SCHEMA_REGISTRY_URL,
                 BUCKET_NAME,
                 localStackContainer.getEndpoint().toString(),
-                "us-east-1"
-        );
+                "us-east-1");
 
         // Produce messages with BigDecimal
         Properties producerProps = new Properties();
-        producerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaContainer.getBootstrapServers());
+        producerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class.getName());
         producerProps.put("schema.registry.url", SCHEMA_REGISTRY_URL);
@@ -183,7 +142,8 @@ public class KafkaS3IntegrationTest {
                     .build());
             byte[] avroBytes = objectStream.readAllBytes();
             DatumReader<GenericRecord> datumReader = new GenericDatumReader<>(schema);
-            try (DataFileReader<GenericRecord> dataFileReader = new DataFileReader<>(new org.apache.avro.file.SeekableByteArrayInput(avroBytes), datumReader)) {
+            try (DataFileReader<GenericRecord> dataFileReader = new DataFileReader<>(
+                    new org.apache.avro.file.SeekableByteArrayInput(avroBytes), datumReader)) {
                 while (dataFileReader.hasNext()) {
                     GenericRecord record = dataFileReader.next();
                     BigDecimal retrievedValue = (BigDecimal) record.get("value");
