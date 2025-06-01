@@ -23,7 +23,7 @@ public class EventIntegrationTest {
 
     @Test
     void submit1000EventsAndCheckDatabase() throws Exception {
-        eventRepository.deleteAll();
+        long before = eventRepository.count();
         for (int i = 0; i < 1000; i++) {
             String json = String.format("{\"name\":\"Event %d\",\"description\":\"Description %d\"}", i, i);
             mockMvc.perform(post("/events")
@@ -31,7 +31,7 @@ public class EventIntegrationTest {
                     .content(json))
                     .andExpect(status().isCreated());
         }
-        long count = eventRepository.count();
-        Assertions.assertEquals(1000, count, "There should be 1000 events in the database");
+        long after = eventRepository.count();
+        Assertions.assertEquals(before + 1000, after, "Row count should increase by 1000 after POSTs");
     }
 }
