@@ -49,8 +49,10 @@ services:
     depends_on:
       - postgres
     environment:
+      DB_URL: jdbc:postgresql://postgres:5432/api-processing
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
       SPRING_PROFILES_ACTIVE: default
-      # Add other env vars as needed
     networks:
       api-processing:
 
@@ -60,10 +62,11 @@ services:
     image: int-test:latest
     depends_on:
       - processing
-    environment: {}
-    # Uncomment to run interactively
-    # stdin_open: true
-    # tty: true
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/api-processing
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      SPRING_PROFILES_ACTIVE: default
     networks:
       api-processing:
 
