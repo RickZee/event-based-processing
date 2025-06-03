@@ -6,6 +6,10 @@ Test ingestion API to save data into a PostgreSQL.
 
 ## Setup
 
+### UI and dashboard links
+
+* Postgres UI: <http://localhost:8082/>
+
 ### Create a table in Postgres
 
 Open Postgres UI the password is `postgres`.
@@ -26,8 +30,9 @@ If you manually switch to a different parent and actually want the inheritance, 
 This Maven module contains Cucumber-based integration tests for the event-based Spring Boot service.
 
 ### Structure
-- `src/test/resources/features/` — Cucumber feature files
-- `src/test/java/com/example/processing/inttest/` — Step definitions, runners, Spring config
+
+* `./int-test/src/test/java/com/example/processing/inttest/EventStepDefinitions.java/` — Step definitions, runners, Spring config
+* `./int-test/src/test/resources/features/event.feature/` — Cucumber feature files
 
 ### Running Tests
 
@@ -37,10 +42,12 @@ This Maven module contains Cucumber-based integration tests for the event-based 
     mvn test
 
 ### Dependencies
-- Cucumber (Java, Spring, JUnit Platform Engine)
-- Spring Boot Test
-- JUnit 5
+
+* Cucumber (Java, Spring, JUnit Platform Engine)
+* Spring Boot Test
+* JUnit 5
 
 ### Notes
-- This module should depend on the main processing project for access to domain classes and repositories.
-- All integration tests should be written in Cucumber.
+
+* This module should depend on the main processing project for access to domain classes and repositories.
+* All integration tests should be written in Cucumber.
