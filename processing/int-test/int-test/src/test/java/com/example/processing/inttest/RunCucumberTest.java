@@ -1,4 +1,4 @@
-package com.example.processing;
+package com.example.processing.inttest;
 
 import io.cucumber.junit.platform.engine.Cucumber;
 
