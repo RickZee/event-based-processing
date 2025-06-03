@@ -25,7 +25,8 @@ public class EventStepDefinitions {
     @When("I submit 1000 events")
     public void i_submit_1000_events() {
         for (int i = 0; i < 1000; i++) {
-            restTemplate.postForEntity("/events", "{\"data\":\"test\"}", String.class);
+            String json = String.format("{\"eventTypeId\":\"%s\",\"eventTypeName\":\"Type%d\",\"tt\":\"2025-06-03T12:00:00Z\",\"vt\":\"2025-06-03T12:00:00Z\",\"schemaVersionId\":\"%s\",\"schemaVersionName\":\"v1\",\"producerName\":\"producer%d\",\"userId\":\"user%d\"}", java.util.UUID.randomUUID(), i, java.util.UUID.randomUUID(), i, i);
+            restTemplate.postForEntity("/events", json, String.class);
         }
     }
 

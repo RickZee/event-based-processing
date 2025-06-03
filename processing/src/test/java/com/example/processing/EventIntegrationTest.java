@@ -27,7 +27,7 @@ public class EventIntegrationTest {
     void submit1000EventsAndCheckDatabase() throws Exception {
         // long before = eventRepository.count();
         // for (int i = 0; i < 1000; i++) {
-        //     String json = String.format("{\"name\":\"Event %d\",\"description\":\"Description %d\"}", i, i);
+        //     String json = String.format("{\"eventTypeId\":\"%s\",\"eventTypeName\":\"Type%d\",\"tt\":\"2025-06-03T12:00:00Z\",\"vt\":\"2025-06-03T12:00:00Z\",\"schemaVersionId\":\"%s\",\"schemaVersionName\":\"v1\",\"producerName\":\"producer%d\",\"userId\":\"user%d\"}", java.util.UUID.randomUUID(), i, java.util.UUID.randomUUID(), i, i);
         //     mockMvc.perform(post("/events")
         //             .contentType(MediaType.APPLICATION_JSON)
         //             .content(json))
