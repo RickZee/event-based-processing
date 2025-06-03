@@ -42,12 +42,12 @@ services:
 
   processing:
     build:
-      context: ./processing
+      context: ./api
     image: processing:latest
     ports:
       - "8080:8080"
     depends_on:
-      - db
+      - postgres
     environment:
       SPRING_PROFILES_ACTIVE: default
       # Add other env vars as needed
@@ -60,8 +60,7 @@ services:
     image: int-test:latest
     depends_on:
       - processing
-    environment:
-      # Add env vars as needed
+    environment: {}
     # Uncomment to run interactively
     # stdin_open: true
     # tty: true
