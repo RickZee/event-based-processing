@@ -5,5 +5,5 @@
 - The module must depend on the main processing project to access domain classes and repositories.
 - Use JUnit 5, Cucumber, and Spring Boot Test for all integration tests.
 - Feature files should be placed under `src/test/resources/features`.
-- Step definitions, runners, and config should be under `src/test/java/com/example/processing/inttest/`.
+- Step definitions, runners, and config should be under `src/test/java/com/example/processing/int-test/`.
 - To run tests: `mvn test` from this module root.

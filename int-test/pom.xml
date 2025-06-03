@@ -40,9 +40,9 @@
     </dependency>
     <!-- Dependency on main processing project -->
     <dependency>
-      <groupId>com.example.processing</groupId>
+      <groupId>com.example</groupId>
       <artifactId>processing</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>0.0.1-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

@@ -1,7 +1,11 @@
 package com.example.processing.inttest;
 
-import io.cucumber.junit.platform.engine.Cucumber;
+import org.junit.platform.suite.api.IncludeEngines;
+import org.junit.platform.suite.api.SelectPackages;
+import org.junit.platform.suite.api.Suite;
 
-@Cucumber
+@Suite
+@IncludeEngines("cucumber")
+@SelectPackages("com.example.processing.inttest")
 public class RunCucumberTest {
 }
