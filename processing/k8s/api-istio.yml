@@ -1,0 +1,33 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: api-gateway
+spec:
+  selector:
+    istio: ingressgateway # use Istio's default ingress gateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: api-virtualservice
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - api-gateway
+  http:
+  - match:
+    - uri:
+        prefix: "/"
+    route:
+    - destination:
+        host: api-service
+        port:
+          number: 80
