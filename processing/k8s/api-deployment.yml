@@ -28,6 +28,24 @@ spec:
               value: postgres
             - name: SPRING_PROFILES_ACTIVE
               value: default
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          volumeMounts:
+            - name: api-data
+              mountPath: /data
+      volumes:
+        - name: api-data
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
