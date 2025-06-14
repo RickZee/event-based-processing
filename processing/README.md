@@ -1,6 +1,6 @@
-# processing-gradle
+# processing
 
-This project is a multi-module Java application built with Gradle. It is designed for event-based processing and includes API, integration tests, and core processing logic.
+Technology and architecture evaluation for API-based even ingestion.
 
 ## Project Structure
 
@@ -14,23 +14,23 @@ This project is a multi-module Java application built with Gradle. It is designe
 
 ## How to Build and Run
 
-1. **Build the project:**
+**Build the project:**
 
-   ```sh
-   ./gradlew build
-   ```
+```sh
+./gradlew build
+```
 
-2. **Run tests:**
+**Run tests:**
 
-   ```sh
-   ./gradlew test
-   ```
+```sh
+./gradlew test
+```
 
-3. **Run with Docker Compose (if applicable):**
+**Run with Docker Compose (if applicable):**
 
-   ```sh
-   docker-compose up
-   ```
+```sh
+docker-compose up
+```
 
 ## Requirements
 
