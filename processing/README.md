@@ -14,6 +14,14 @@ Technology and architecture evaluation for API-based even ingestion.
 
 ## How to Build and Run
 
+**API Environment Variables:**
+
+```sh
+DB_URL=jdbc:postgresql://localhost:5432/api-processing
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
+```
+
 **Build the project:**
 
 ```sh
