@@ -35,3 +35,17 @@ target
 .venv-data
 __pycache__/
 *.pyc
+
+# Gradle specific files
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Gradle IDE specific
+.idea/**/gradle.xml
+.idea/**/libraries
+gradle-app.setting
+*.gradle.kts~
+*.gradle~

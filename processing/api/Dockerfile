@@ -1,9 +1,9 @@
 # Dockerfile for processing module
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:17-jre
 
 WORKDIR /app
 
-COPY target/processing-0.0.1-SNAPSHOT.jar app.jar
+COPY build/libs/api-0.0.1-SNAPSHOT.jar app.jar
 
 EXPOSE 8080
 

@@ -1,53 +1,49 @@
-# Getting Started
+# processing-gradle
 
-## Processing API
+This project is a multi-module Java application built with Gradle. It is designed for event-based processing and includes API, integration tests, and core processing logic.
 
-Test ingestion API to save data into a PostgreSQL.
+## Project Structure
 
-## Setup
+- **api/**: Contains the API module, including controllers, repositories, and domain models for event processing.
+- **int-test/**: Contains integration tests and feature files for end-to-end testing.
+- **src/**: Main source code for the processing logic, including Java classes and resources.
+- **build.gradle**: Root Gradle build configuration file.
+- **settings.gradle**: Gradle settings for multi-module configuration.
+- **docker-compose.yml**: Docker Compose file for running services required by the application.
+- **gradlew.sh / gradlew.bat**: Gradle wrapper scripts for Unix and Windows environments.
 
-### UI and dashboard links
+## How to Build and Run
 
-* Postgres UI: <http://localhost:8082/>
+1. **Build the project:**
 
-### Create a table in Postgres
+   ```sh
+   ./gradlew build
+   ```
 
-Open Postgres UI the password is `postgres`.
+2. **Run tests:**
 
-Create a new connection to server `postgres`.
+   ```sh
+   ./gradlew test
+   ```
 
-Open and create the table and data from `./data/create-table.sql`.
+3. **Run with Docker Compose (if applicable):**
 
-## Maven Parent overrides
+   ```sh
+   docker-compose up
+   ```
 
-Due to Maven's design, elements are inherited from the parent POM to the project POM.
-While most of the inheritance is fine, it also inherits unwanted elements like `<license>` and `<developers>` from the parent.
-To prevent this, the project POM contains empty overrides for these elements.
-If you manually switch to a different parent and actually want the inheritance, you need to remove those overrides.
+## Requirements
 
-## int-test: Cucumber Integration Test Module
+- Java 17 or later
+- Gradle (wrapper included)
+- Docker (optional, for integration with external services)
 
-This Maven module contains Cucumber-based integration tests for the event-based Spring Boot service.
+## Notes
 
-### Structure
+- The `api` module exposes REST endpoints for event processing.
+- The `int-test` module uses feature files for behavior-driven testing.
+- Use the Gradle wrapper scripts (`gradlew.sh` or `gradlew.bat`) to ensure consistent builds across environments.
 
-* `./int-test/src/test/java/com/example/processing/inttest/EventStepDefinitions.java/` — Step definitions, runners, Spring config
-* `./int-test/src/test/resources/features/event.feature/` — Cucumber feature files
+---
 
-### Running Tests
-
-1. Ensure the main processing project is built and available as a dependency.
-2. From this directory, run:
-
-    mvn test
-
-### Dependencies
-
-* Cucumber (Java, Spring, JUnit Platform Engine)
-* Spring Boot Test
-* JUnit 5
-
-### Notes
-
-* This module should depend on the main processing project for access to domain classes and repositories.
-* All integration tests should be written in Cucumber.
+For more details, see the documentation in each module or contact the project maintainers.
