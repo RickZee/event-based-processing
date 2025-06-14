@@ -1,4 +1,6 @@
 plugins {
+    id 'org.springframework.boot' version '3.4.6'
+    id 'io.spring.dependency-management' version '1.1.7'
     id 'java'
 }
 
@@ -23,6 +25,7 @@ dependencies {
     testImplementation project(':api')
     testImplementation 'org.springframework.boot:spring-boot-starter-jdbc:3.4.0'
     testImplementation 'org.springframework.boot:spring-boot-starter-web:3.4.0'
+    testImplementation 'com.h2database:h2:2.3.230'
 }
 
 test {

@@ -13,7 +13,7 @@ public class VersionStepDefinitions {
     private TestRestTemplate restTemplate;
     private ResponseEntity<String> response;
 
-    @When("I GET /version")
+    @When("I GET version")
     public void i_get_version() {
         response = restTemplate.getForEntity("/version", String.class);
     }
@@ -23,8 +23,8 @@ public class VersionStepDefinitions {
         assertEquals(200, response.getStatusCode().value());
     }
 
-    @Then("the response body should be \"1.0.0\"")
-    public void the_response_body_should_be_version() {
-        assertEquals("1.0.0", response.getBody());
+    @Then("the response body should be {string}")
+    public void the_response_body_should_be_version(String expected) {
+        assertEquals(expected, response.getBody());
     }
 }
