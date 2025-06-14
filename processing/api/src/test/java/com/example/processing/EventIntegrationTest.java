@@ -23,7 +23,6 @@ public class EventIntegrationTest {
     private EventRepository eventRepository;
 
     @Test()
-    @Disabled("Disabled for build stability")
     void submit1000EventsAndCheckDatabase() throws Exception {
         long before = eventRepository.count();
         for (int i = 0; i < 1000; i++) {

@@ -20,7 +20,7 @@ public class VersionStepDefinitions {
 
     @Then("the response status should be 200")
     public void the_response_status_should_be_200() {
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
     }
 
     @Then("the response body should be \"1.0.0\"")
