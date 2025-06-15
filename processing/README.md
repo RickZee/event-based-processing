@@ -40,6 +40,12 @@ DB_PASSWORD=postgres
 docker-compose up
 ```
 
+**Run Cucumber Tests:**
+
+```sh
+DB_HOST=localhost DB_PORT=5432 DB_NAME=processing DB_USER=postgres DB_PASSWORD=postgres ./gradlew.sh test -p int-test --tests '*Cucumber*'
+```
+
 ## Requirements
 
 - Java 17 or later

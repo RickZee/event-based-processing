@@ -8,7 +8,7 @@ import jakarta.persistence.Id;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-@Entity
+@Entity(name = "events")
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

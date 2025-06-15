@@ -15,4 +15,8 @@ public class EventService {
     public Event saveEvent(Event event) {
         return eventRepository.save(event);
     }
+
+    public long count() {
+        return eventRepository.count();
+    }
 }

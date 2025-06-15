@@ -20,4 +20,9 @@ public class EventController {
         Event savedEvent = eventService.saveEvent(event);
         return new ResponseEntity<>(savedEvent, HttpStatus.CREATED);
     }
+
+    @GetMapping("/events-count")
+    public ResponseEntity<Long> getEventsCount() {
+        return new ResponseEntity<>(eventService.count(), HttpStatus.OK);
+    }
 }
