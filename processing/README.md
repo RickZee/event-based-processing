@@ -5,8 +5,9 @@ Technology and architecture evaluation for API-based even ingestion.
 ## Project Structure
 
 - **api/**: Contains the API module, including controllers, repositories, and domain models for event processing.
+- **data/**: Database scripts.
 - **int-test/**: Contains integration tests and feature files for end-to-end testing.
-- **src/**: Main source code for the processing logic, including Java classes and resources.
+- **k8s/**: Kubernetes manifest files.
 - **settings.gradle**: Gradle settings for multi-module configuration.
 - **docker-compose.yml**: Docker Compose file for running services required by the application.
 - **gradlew.sh / gradlew.bat**: Gradle wrapper scripts for Unix and Windows environments.
