@@ -51,9 +51,9 @@ public class EventStepDefinitions {
         initialRowCount = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM " + EVENT_TABLE, Integer.class);
     }
 
-    @When("I GET \\/events-count")
+    @When("I GET \\/events\\/events-count")
     public void i_get_events_count() {
-        response = restTemplate.getForEntity("/events-count", String.class);
+        response = restTemplate.getForEntity("/events/events-count", String.class);
     }
 
     @Then("the response code should be 200")

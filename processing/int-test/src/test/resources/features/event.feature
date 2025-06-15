@@ -6,6 +6,6 @@ Feature: Event processing
 
   Scenario: Get the count of events
     Given I remember the event table row count
-    When I GET /events-count
+    When I GET /events/events-count
     Then the response code should be 200
     And the response body should contain the remembered row count
