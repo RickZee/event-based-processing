@@ -14,36 +14,44 @@ Technology and architecture evaluation for API-based even ingestion.
 
 ## How to Build and Run
 
-**API Environment Variables:**
-
-```sh
-DB_URL=jdbc:postgresql://localhost:5432/api-processing
-DB_USERNAME=postgres
-DB_PASSWORD=postgres
-```
-
-**Build the project:**
+### Build the project ###
 
 ```sh
 ./gradlew build
 ```
 
-**Run tests:**
+### Run tests ###
 
 ```sh
 ./gradlew test
 ```
 
-**Run with Docker Compose (if applicable):**
+### Run with Docker Compose (if applicable) ###
 
 ```sh
 docker-compose up
 ```
 
-**Run Cucumber Tests:**
+### Run Cucumber Tests ###
+
+**With live database:**
 
 ```sh
-DB_HOST=localhost DB_PORT=5432 DB_NAME=processing DB_USER=postgres DB_PASSWORD=postgres ./gradlew.sh test -p int-test --tests '*Cucumber*'
+SPRING_PROFILES_ACTIVE=postgres DB_URL=jdbc:postgresql://localhost:5432/api-processing DB_USERNAME=postgres DB_PASSWORD=postgres ./gradlew.sh test -p int-test --tests '*Cucumber*'
+```
+
+**With in-memory database:**
+
+```sh
+./gradlew.sh test -p int-test --tests '*Cucumber*'
+```
+
+### API Environment Variables ###
+
+```sh
+DB_URL=jdbc:postgresql://localhost:5432/api-processing
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
 ```
 
 ## Requirements
@@ -57,7 +65,3 @@ DB_HOST=localhost DB_PORT=5432 DB_NAME=processing DB_USER=postgres DB_PASSWORD=p
 - The `api` module exposes REST endpoints for event processing.
 - The `int-test` module uses feature files for behavior-driven testing.
 - Use the Gradle wrapper scripts (`gradlew.sh` or `gradlew.bat`) to ensure consistent builds across environments.
-
----
-
-For more details, see the documentation in each module or contact the project maintainers.
